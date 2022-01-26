@@ -1,0 +1,87 @@
+---
+title: "A3_Duong_Tram"
+author: "TramooD17"
+date: "25/01/2022"
+output: html_document
+---
+## Project Info
+Date: 2022 January 25  
+GitHub Repository Link: https://github.com/TramooD17/Assignment-3  
+Username: TramooD17  
+Student #: 20109161  
+17CTTD
+
+## Assignment
+Loading data and packages:
+```{r}
+library("dplyr")
+library("tidyverse")
+```
+```{r}
+MyDat=read.csv("./InputData/FallopiaData.csv")
+```
+The following code will:
+
+Remove rows with ‘Total’ biomass < 60;
+
+Reorder the columns so that they are in the order: ‘Total’, ‘Taxon’, ‘Scenario’, ‘Nutrients’, and remove the other columns;
+
+Make a new column TotalG, which converts the ‘Total’ column from mg to grams AND replace Total with TotalG, and add it to the dataset.
+```{r}
+Dat2 <- MyDat %>%
+  filter(Total<60) %>%
+  select(Total, Taxon, Scenario, Nutrients) %>%
+  mutate(TotalG = Total/100)%>%
+  select(TotalG, Taxon, Scenario, Nutrients, -Total)
+```
+The following is a custom function that will take two inputs from the user:
+
+1. a vector of data to process (e.g. column from a data.frame object) and
+
+2. a string that defines what calculation to perform.
+- if string #2 is "Average" then calculate the average value for the column named in vector #1
+- if string #2 is "Sum" then calculate the sum of values for the column named in vector #1
+- if string #2 is "Observations" then count the number of observed values for the column named in vector #1
+- if string #2 is anything else, then output an error to the user
+```{r}
+Func1 <- function(vec1 = 0, string2 = 0){
+  if (string2 == "Average") {
+    cat("\nAverage\n")
+    return(mean(vec1))
+  }
+  if (string2 == "Sum"){
+    cat("\nSum\n")
+    return(sum(vec1))
+  }
+  if (string2 == "Observations"){
+    cat("\nObservations\n")
+    return(length(vec1))
+  }
+ if (string2 != "Average") {
+   print("Error")
+ }
+  if (string2 != "Sum") {
+    print("Error")
+  }
+  if (string2 != "Observations") {
+    print("Error")
+  }
+}
+```
+Write some R code that uses your function to count the total number of observations in the 'Taxon' column.
+```{r}
+Func1(MyDat$Taxon, "Observations")
+```
+Write some R code that uses your function to calculate the average TotalG for each of the two Nutrient concentrations.
+```{r}
+averages <- Dat2 %>%
+  group_by(Nutrients) %>%
+summarise(Average = Func1(vec1 = TotalG, string2 = "Average"))
+
+print(averages)
+```
+Write (i.e. save) the new data to a file called "WrangledData.csv" in the Output folder.
+```{r}
+write.csv(averages, "./Output/WrangledData.csv")
+```
+
