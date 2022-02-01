@@ -8,13 +8,28 @@ output: html_document
  SN: 20109161  
  GitHub: TramooD17  
  
+ ## Part 1: Data Science  
 Import measurements.csv file from into an object called MData
 ```{r}
 MData <- read.csv("measurements.csv")
 head(MData)
 ```
+Opening dplyr:
+```{r}
+library("dplyr")
+```
+
 Use a dplyr command AND regular expression(s) to add a new column called Sp that shortens the genus name in the Organism column to only the first letter and period. For example: Homo sapiens in the original Organism column becomes H. sapiens in the Sp column. 
 ```{r}
-
+MData <- mutate(MData, Sp = sub("(\\w)\\w+","\\1.", Organism))
+head(MData)
+```
+Use a dplyr command to create a new dataset BUT with Sp column instead of the Organism column, moved to the beginning in place of the original Organism column.
+```{r}
+MData2 <- select(MData, Sp, Limb.width, Limb.length, Observer)
+```
+Save the dataset as a new file called MeasShort.csv.
+```{r}
+write.csv(MData2, "MeasShort.csv")
 ```
 
